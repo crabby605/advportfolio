@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Terminal Simulation</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: monospace;
+            background-color: #1e1e1e;
+            color: #dcdcdc;
+        }
+
+        .terminal {
+            background-color: #000;
+            border: none;
+            padding: 10px;
+            width: 100vw;
+            height: 100vh;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            color: #dcdcdc;
+        }
+
+        #terminal-output {
+            margin: 0;
+        }
+
+        .input-area {
+            display: flex;
+            align-items: center;
+        }
+
+        .input-area span {
+            margin-right: 5px;
+            color: #00ff00;
+        }
+
+        .input-area .tilde {
+            color: #00ff00;
+        }
+
+        .input-area input {
+            background-color: #000;
+            color: #dcdcdc;
+            border: none;
+            outline: none;
+            flex: 1;
+            padding: 5px;
+            font-family: monospace;
+            caret-color: #00ff00;
+        }
+
+        .input-area input:focus {
+            outline: none;
+        }
+
+        .command {
+            color: #00ff00;
+        }
+
+        .output {
+            color: #dcdcdc;
+        }
+
+        .error {
+            color: #ff0000;
+        }
+
+        a {
+            color: #00ff00;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Blinking cursor effect */
+        .blinking-cursor::after {
+            content: '|';
+            animation: blink 1s step-end infinite;
+            color: #00ff00;
+        }
+
+        @keyframes blink {
+            from, to {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <pre id="terminal-output">
+guest@crabby.me:~$ Welcome to crabby.me!
+
+Instructions:
+1. To list available commands, type: <span class="command">help</span>
+2. To clear the terminal, type: <span class="command">clear</span>
+3. Use the following commands for more information:
+   - <span class="command">about</span> - Displays information about me
+   - <span class="command">contact</span> - Displays contact information
+   - <span class="command">learning</span> - Drafts for learning topics
+   - <span class="command">skills</span> - Lists and runs available skills
+        </pre>
+        <div class="input-area blinking-cursor">
+            <span>guest@crabby.me:</span>
+            <span class="tilde">~</span>
+            <span>$</span>
+            <input type="text" id="command-input" placeholder="Enter command" autofocus>
+        </div>
+    </div>
+    <script>
+        const availableCommands = ['help', 'clear', 'about', 'contact', 'learning', 'skills', 'run'];
+
+        document.getElementById('command-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                processCommand(this.value);
+                this.value = '';
+            }
+        });
+
+        function processCommand(command) {
+            const output = document.getElementById('terminal-output');
+            const [cmd, option] = command.split(' ');
+
+            let result = '';
+
+            if (!availableCommands.includes(cmd)) {
+                result = suggestCorrection(cmd);
+            } else {
+                switch (cmd) {
+                    case 'help':
+                        result = '<span class="command">Available commands:</span>\n' +
+                                 '<span class="command">help</span> - Display this help message\n' +
+                                 '<span class="command">clear</span> - Clear the terminal\n' +
+                                 '<span class="command">about</span> - Displays information about me\n' +
+                                 '<span class="command">contact</span> - Displays contact information\n' +
+                                 '<span class="command">learning</span> - Drafts for learning topics\n' +
+                                 '<span class="command">skills</span> - Lists and runs available skills';
+                        break;
+                    case 'clear':
+                        output.innerHTML = '';
+                        return;
+                    case 'about':
+                        result = 'Vihaan (known as Crabby or Crabby605 on the internet)\n' +
+                                 'I play Minecraft and love photography.';
+                        break;
+                    case 'contact':
+                        result = 'Email: <a href="mailto:vihaanpingalkar4@proton.me">vihaanpingalkar4@proton.me</a>\n' +
+                                 'GitHub: <a href="https://github.com/Crabby605" target="_blank">Crabby605</a>\n' +
+                                 'Reddit: <a href="https://reddit.com/u/Crabby605" target="_blank">Crabby605</a>\n' +
+                                 'Discord: Crabby605';
+                        break;
+                    case 'learning':
+                        result = '<h1>My Learning Journey</h1>\n' +
+                                 '<p>Here are some of the platforms and achievements from my learning journey:</p>\n' +
+                                 '<div class="certificates">\n' +
+                                 '  <h2>EDX</h2>\n' +
+                                 '  <p>I\'m on EDX learning Python using the CS50 course by Harvard and a Python course by MIT. I hope to finish and pass!</p>\n' +
+                                 '\n' +
+                                 '  <h2>GitHub</h2>\n' +
+                                 '  <p>I\'m on GitHub, check out my repositories <a href="https://github.com/Crabby605" target="_blank">here</a>.</p>\n' +
+                                 '\n' +
+                                 '  <h2>Hack Club</h2>\n' +
+                                 '  <p>Yes, I do have a Hack Club! If you want to see my development, check out my scrapbook <a href="https://hack.club/r68gu" target="_blank">here</a>.</p>\n' +
+                                 '\n' +
+                                 '  <h2>LeetCode</h2>\n' +
+                                 '  <p>Like any sensible person, I have a LeetCode account.</p>\n' +
+                                 '\n' +
+                                 '  <h2>Google Cloud</h2>\n' +
+                                 '  <p>I have also learned to use Google Cloud. You can see my achievements down there.</p>\n' +
+                                 '</div>';
+                        break;
+                    case 'skills':
+                        result = 'Available Skills:\n' +
+                                 '1. Java - Print Star Triangle\n' +
+                                 '2. Java - Print Number Triangle\n' +
+                                 '3. Java - Print Reverse Star Triangle\n' +
+                                 '4. Python - Print Star Triangle\n' +
+                                 '5. Python - Print Number Triangle\n' +
+                                 '6. Python - Print Reverse Star Triangle\n' +
+                                 '7. JavaScript - Print Star Triangle\n' +
+                                 '8. JavaScript - Print Number Triangle\n' +
+                                 '9. JavaScript - Print Reverse Star Triangle\n' +
+                                 'Use <span class="command">run &lt;number&gt;</span> to execute specific skill options.';
+                        break;
+                    case 'run':
+                        if (option) {
+                            result = runSkill(option);
+                        } else {
+                            result = '<span class="error">Specify an option to run, e.g., run 1</span>';
+                        }
+                        break;
+                }
+            }
+
+            output.innerHTML += '<br>guest@crabby.me:<span class="tilde">~</span>$ <span class="command">' + command + '</span><br>' + result;
+            const terminal = document.querySelector('.terminal');
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function suggestCorrection(cmd) {
+            const closestCommand = availableCommands.reduce((prev, curr) => {
+                return getLevenshteinDistance(cmd, curr) < getLevenshteinDistance(cmd, prev) ? curr : prev;
+            });
+            return `<span class="error">Command not found: <span class="command">${cmd}</span>. Did you mean <span class="command">${closestCommand}</span>?</span>`;
+        }
+
+        function getLevenshteinDistance(a, b) {
+            const tmp;
+            const i, j;
+            const alen = a.length;
+            const blen = b.length;
+            const dp = Array.from({ length: alen + 1 }, () => Array(blen + 1).fill(0));
+
+            if (alen === 0) {
+                return blen;
+            }
+            if (blen === 0) {
+                return alen;
+            }
+
+            for (i = 0; i <= alen; i++) {
+                dp[i][0] = i;
+            }
+            for (j = 0; j <= blen; j++) {
+                dp[0][j] = j;
+            }
+
+            for (i = 1; i <= alen; i++) {
+                for (j = 1; j <= blen; j++) {
+                    tmp = a[i - 1] === b[j - 1] ? 0 : 1;
+                    dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + tmp);
+                }
+            }
+
+            return dp[alen][blen];
+        }
+
+        function runSkill(option) {
+            switch (option) {
+                case '1':
+                    return 'Star Triangle (Java):\n\n' +
+                           '       *\n' +
+                           '      ***\n' +
+                           '     *****\n' +
+                           '    *******\n' +
+                           '   *********';
+                case '2':
+                    return 'Number Triangle (Java):\n\n' +
+                           '1\n' +
+                           '12\n' +
+                           '123\n' +
+                           '1234\n' +
+                           '12345';
+                case '3':
+                    return 'Reverse Star Triangle (Java):\n\n' +
+                           '*******\n' +
+                           '******\n' +
+                           '*****\n' +
+                           '****\n' +
+                           '***\n' +
+                           '**\n' +
+                           '*';
+                case '4':
+                    return 'Star Triangle (Python):\n\n' +
+                           '1\n' +
+                           '22\n' +
+                           '333\n' +
+                           '4444\n' +
+                           '55555';
+                case '5':
+                    return 'Number Triangle (Python):\n\n' +
+                           '1\n' +
+                           '22\n' +
+                           '333\n' +
+                           '4444\n' +
+                           '55555';
+                case '6':
+                    return 'Reverse Star Triangle (Python):\n\n' +
+                           '55555\n' +
+                           '4444\n' +
+                           '333\n' +
+                           '22\n' +
+                           '1';
+                case '7':
+                    return 'Star Triangle (JavaScript):\n\n' +
+                           'A\n' +
+                           'BB\n' +
+                           'CCC\n' +
+                           'DDDD\n' +
+                           'EEEEE';
+                case '8':
+                    return 'Number Triangle (JavaScript):\n\n' +
+                           '1\n' +
+                           '12\n' +
+                           '123\n' +
+                           '1234\n' +
+                           '12345';
+                case '9':
+                    return 'Reverse Star Triangle (JavaScript):\n\n' +
+                           'EEEEE\n' +
+                           'DDDD\n' +
+                           'CCC\n' +
+                           'BB\n' +
+                           'A';
+                default:
+                    return '<span class="error">Invalid option for skills.</span>';
+            }
+        }
+    </script>
+</body>
+</html>
