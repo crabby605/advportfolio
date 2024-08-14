@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Terminal Simulation</title>
+    <title>THE NERDS</title>
     <style>
         body {
             margin: 0;
@@ -116,8 +116,6 @@ Instructions:
         </div>
     </div>
     <script>
-        const availableCommands = ['help', 'clear', 'about', 'contact', 'learning', 'skills', 'run'];
-
         document.getElementById('command-input').addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
@@ -126,14 +124,21 @@ Instructions:
             }
         });
 
+        const commands = ['help', 'clear', 'about', 'contact', 'learning', 'skills', 'run'];
+
         function processCommand(command) {
             const output = document.getElementById('terminal-output');
             const [cmd, option] = command.split(' ');
 
             let result = '';
 
-            if (!availableCommands.includes(cmd)) {
-                result = suggestCorrection(cmd);
+            if (!commands.includes(cmd)) {
+                const suggestion = findClosestCommand(cmd);
+                if (suggestion) {
+                    result = `<span class="error">Command not found: ${cmd}. Did you mean <span class="command">${suggestion}</span>?</span>`;
+                } else {
+                    result = '<span class="error">Invalid command. Type <span class="command">help</span> for available commands.</span>';
+                }
             } else {
                 switch (cmd) {
                     case 'help':
@@ -179,21 +184,15 @@ Instructions:
                                  '</div>';
                         break;
                     case 'skills':
-                        result = 'Available Skills:\n' +
-                                 '1. Java - Print Star Triangle\n' +
-                                 '2. Java - Print Number Triangle\n' +
-                                 '3. Java - Print Reverse Star Triangle\n' +
-                                 '4. Python - Print Star Triangle\n' +
-                                 '5. Python - Print Number Triangle\n' +
-                                 '6. Python - Print Reverse Star Triangle\n' +
-                                 '7. JavaScript - Print Star Triangle\n' +
-                                 '8. JavaScript - Print Number Triangle\n' +
-                                 '9. JavaScript - Print Reverse Star Triangle\n' +
-                                 'Use <span class="command">run &lt;number&gt;</span> to execute specific skill options.';
+                        result = 'Available skills:\n' +
+                                 '1. Python: Hello, World!\n' +
+                                 '2. Java: Hello, World!\n' +
+                                 '3. JavaScript: Hello, World!\n' +
+                                 'Use <span class="command">run &lt;number&gt;</span> to see the code examples.(theres some bug)';
                         break;
                     case 'run':
                         if (option) {
-                            result = runSkill(option);
+                            result = runSubCommand(option);
                         } else {
                             result = '<span class="error">Specify an option to run, e.g., run 1</span>';
                         }
@@ -206,45 +205,61 @@ Instructions:
             terminal.scrollTop = terminal.scrollHeight;
         }
 
-        function suggestCorrection(cmd) {
-            const closestCommand = availableCommands.reduce((prev, curr) => {
-                return getLevenshteinDistance(cmd, curr) < getLevenshteinDistance(cmd, prev) ? curr : prev;
-            });
-            return `<span class="error">Command not found: <span class="command">${cmd}</span>. Did you mean <span class="command">${closestCommand}</span>?</span>`;
-        }
+        function findClosestCommand(input) {
+            const threshold = 3;  // Maximum allowed distance for suggestions
+            let closest = null;
+            let minDistance = Infinity;
 
-        function getLevenshteinDistance(a, b) {
-            const tmp;
-            const i, j;
-            const alen = a.length;
-            const blen = b.length;
-            const dp = Array.from({ length: alen + 1 }, () => Array(blen + 1).fill(0));
-
-            if (alen === 0) {
-                return blen;
-            }
-            if (blen === 0) {
-                return alen;
-            }
-
-            for (i = 0; i <= alen; i++) {
-                dp[i][0] = i;
-            }
-            for (j = 0; j <= blen; j++) {
-                dp[0][j] = j;
-            }
-
-            for (i = 1; i <= alen; i++) {
-                for (j = 1; j <= blen; j++) {
-                    tmp = a[i - 1] === b[j - 1] ? 0 : 1;
-                    dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + tmp);
+            for (const cmd of commands) {
+                const distance = getLevenshteinDistance(input, cmd);
+                if (distance < minDistance && distance <= threshold) {
+                    minDistance = distance;
+                    closest = cmd;
                 }
             }
 
-            return dp[alen][blen];
+            return closest;
         }
 
-        function runSkill(option) {
+        function getLevenshteinDistance(a, b) {
+            const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+
+            for (let i = 0; i <= a.length; i++) {
+                for (let j = 0; j <= b.length; j++) {
+                    if (i === 0) {
+                        dp[i][j] = j;
+                    } else if (j === 0) {
+                        dp[i][j] = i;
+                    } else if (a[i - 1] === b[j - 1]) {
+                        dp[i][j] = dp[i - 1][j - 1];
+                    } else {
+                        dp[i][j] = Math.min(
+                            dp[i - 1][j] + 1,
+                            dp[i][j - 1] + 1,
+                            dp[i - 1][j - 1] + 1
+                        );
+                    }
+                }
+            }
+
+            return dp[a.length][b.length];
+        }
+
+        function runSubCommand(option) {
+            const command = document.getElementById('command-input').value.split(' ')[0];
+            switch (command) {
+                case 'java':
+                    return runJavaSubCommand(option);
+                case 'python':
+                    return runPythonSubCommand(option);
+                case 'javascript':
+                    return runJavaScriptSubCommand(option);
+                default:
+                    return '<span class="error">Invalid command.</span>';
+            }
+        }
+
+        function runJavaSubCommand(option) {
             switch (option) {
                 case '1':
                     return 'Star Triangle (Java):\n\n' +
@@ -269,42 +284,56 @@ Instructions:
                            '***\n' +
                            '**\n' +
                            '*';
-                case '4':
+                default:
+                    return '<span class="error">Invalid option for Java.</span>';
+            }
+        }
+
+        function runPythonSubCommand(option) {
+            switch (option) {
+                case '1':
                     return 'Star Triangle (Python):\n\n' +
                            '1\n' +
                            '22\n' +
                            '333\n' +
                            '4444\n' +
                            '55555';
-                case '5':
+                case '2':
                     return 'Number Triangle (Python):\n\n' +
                            '1\n' +
                            '22\n' +
                            '333\n' +
                            '4444\n' +
                            '55555';
-                case '6':
+                case '3':
                     return 'Reverse Star Triangle (Python):\n\n' +
                            '55555\n' +
                            '4444\n' +
                            '333\n' +
                            '22\n' +
                            '1';
-                case '7':
+                default:
+                    return '<span class="error">Invalid option for Python.</span>';
+            }
+        }
+
+        function runJavaScriptSubCommand(option) {
+            switch (option) {
+                case '1':
                     return 'Star Triangle (JavaScript):\n\n' +
                            'A\n' +
                            'BB\n' +
                            'CCC\n' +
                            'DDDD\n' +
                            'EEEEE';
-                case '8':
+                case '2':
                     return 'Number Triangle (JavaScript):\n\n' +
                            '1\n' +
                            '12\n' +
                            '123\n' +
                            '1234\n' +
                            '12345';
-                case '9':
+                case '3':
                     return 'Reverse Star Triangle (JavaScript):\n\n' +
                            'EEEEE\n' +
                            'DDDD\n' +
@@ -312,7 +341,7 @@ Instructions:
                            'BB\n' +
                            'A';
                 default:
-                    return '<span class="error">Invalid option for skills.</span>';
+                    return '<span class="error">Invalid option for JavaScript.</span>';
             }
         }
     </script>
