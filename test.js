@@ -1,3 +1,4 @@
+<script>
 document.addEventListener('DOMContentLoaded', function () {
     // Fetch the user's IP address
     fetch('https://api.ipify.org?format=json')
@@ -33,16 +34,23 @@ document.addEventListener('DOMContentLoaded', function () {
         const terminalOutput = document.createElement('pre');
         terminalOutput.id = 'terminal-output';
         terminalOutput.style.margin = '0';
-        terminalOutput.textContent = `${userIp}@crabby.me:~$ Welcome to crabby.me!
-
+        terminalOutput.style.fontSize = 'small';
+        terminalOutput.innerHTML = `
+██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗    ████████╗ ██████╗      ██████╗██████╗  █████╗ ██████╗ ██████╗ ██╗   ██╗███╗   ███╗███████╗██╗
+██║    ██║██╔════╝██║     ██╔════╝██╔═══██╗████╗ ████║██╔════╝    ╚══██╔══╝██╔═══██╗    ██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔══██╗╚██╗ ██╔╝████╗ ████║██╔════╝██║
+██║ █╗ ██║█████╗  ██║     ██║     ██║   ██║██╔████╔██║█████╗         ██║   ██║   ██║    ██║     ██████╔╝███████║██████╔╝██████╔╝ ╚████╔╝ ██╔████╔██║█████╗  ██║
+██║███╗██║██╔══╝  ██║     ██║     ██║   ██║██║╚██╔╝██║██╔══╝         ██║   ██║   ██║    ██║     ██╔══██╗██╔══██║██╔══██╗██╔══██╗  ╚██╔╝  ██║╚██╔╝██║██╔══╝  ╚═╝
+╚███╔███╔╝███████╗███████╗╚██████╗╚██████╔╝██║ ╚═╝ ██║███████╗       ██║   ╚██████╔╝    ╚██████╗██║  ██║██║  ██║██████╔╝██████╔╝   ██║██╗██║ ╚═╝ ██║███████╗██╗
+ ╚══╝╚══╝ ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝       ╚═╝    ╚═════╝      ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚═════╝    ╚═╝╚═╝╚═╝     ╚═╝╚══════╝╚═╝
+                                                                                                                                                               
 Instructions:
-1. To list available commands, type: help
-2. To clear the terminal, type: clear
+1. To list available commands, type: <span class="command">help</span>
+2. To clear the terminal, type: <span class="command">clear</span>
 3. Use the following commands for more information:
-   - about - Displays information about me
-   - contact - Displays contact information
-   - learning - Drafts for learning topics
-   - skills - Lists and runs available skills`;
+   - <span class="command">about</span> - Displays information about me
+   - <span class="command">contact</span> - Displays contact information
+   - <span class="command">learning</span> - Drafts for learning topics
+   - <span class="command">skills</span> - Lists and runs available skills`;
         terminal.appendChild(terminalOutput);
 
         const inputArea = document.createElement('div');
@@ -52,16 +60,17 @@ Instructions:
         terminal.appendChild(inputArea);
 
         const span1 = document.createElement('span');
-        span1.textContent = `${userIp}@crabby.me:`;
+        span1.innerHTML = `<span class="command">${userIp}@crabby.me:</span>`;
         inputArea.appendChild(span1);
 
         const tilde = document.createElement('span');
         tilde.textContent = '~';
-        tilde.style.color = '#00ff00';
+        tilde.className = 'command';
         inputArea.appendChild(tilde);
 
         const dollarSign = document.createElement('span');
         dollarSign.textContent = '$';
+        dollarSign.className = 'command';
         inputArea.appendChild(dollarSign);
 
         const commandInput = document.createElement('input');
@@ -75,7 +84,7 @@ Instructions:
         commandInput.style.flex = '1';
         commandInput.style.padding = '5px';
         commandInput.style.fontFamily = 'monospace';
-        commandInput.style.caretColor = '#00ff00';
+        commandInput.style.caretColor = '#00ff00';  // Thicker cursor
         commandInput.autofocus = true;
         inputArea.appendChild(commandInput);
 
@@ -86,6 +95,7 @@ Instructions:
                 content: '|';
                 animation: blink 1s step-end infinite;
                 color: #00ff00;
+                font-weight: bold;
             }
 
             @keyframes blink {
@@ -95,6 +105,14 @@ Instructions:
                 50% {
                     opacity: 0;
                 }
+            }
+
+            .command {
+                color: #00ff00;  /* Green color for commands */
+            }
+
+            .error {
+                color: #ff0000;  /* Red color for errors */
             }
         `;
         document.head.appendChild(style);
@@ -119,20 +137,20 @@ Instructions:
         if (!commands.includes(cmd)) {
             const suggestion = findClosestCommand(cmd);
             if (suggestion) {
-                result = `Command not found: ${cmd}. Did you mean ${suggestion}?`;
+                result = `<span class="error">Command not found: ${cmd}. Did you mean ${suggestion}?</span>`;
             } else {
-                result = 'Invalid command. Type help for available commands.';
+                result = '<span class="error">Invalid command. Type <span class="command">help</span> for available commands.</span>';
             }
         } else {
             switch (cmd) {
                 case 'help':
                     result = `Available commands:
-help - Display this help message
-clear - Clear the terminal
-about - Displays information about me
-contact - Displays contact information
-learning - Drafts for learning topics
-skills - Lists and runs available skills`;
+<span class="command">help</span> - Display this help message
+<span class="command">clear</span> - Clear the terminal
+<span class="command">about</span> - Displays information about me
+<span class="command">contact</span> - Displays contact information
+<span class="command">learning</span> - Drafts for learning topics
+<span class="command">skills</span> - Lists and runs available skills`;
                     break;
                 case 'clear':
                     output.innerHTML = '';
@@ -171,19 +189,19 @@ I have also learned to use Google Cloud. You can see my achievements down there.
 1. Python: Hello, World!
 2. Java: Hello, World!
 3. JavaScript: Hello, World!
-Use run <number> to see the code examples.(theres some bug)`;
+Use <span class="command">run <number></span> to see the code examples.`;
                     break;
                 case 'run':
                     if (option) {
                         result = runSubCommand(option);
                     } else {
-                        result = 'Specify an option to run, e.g., run 1';
+                        result = '<span class="error">Specify an option to run, e.g., <span class="command">run 1</span></span>';
                     }
                     break;
             }
         }
 
-        output.innerHTML += `<br>${userIp}@crabby.me:~$ ${command}<br>${result}`;
+        output.innerHTML += `<br><span class="command">${userIp}@crabby.me:~$ ${command}</span><br>${result}`;
         document.body.querySelector('div').scrollTop = document.body.querySelector('div').scrollHeight;
     }
 
@@ -207,7 +225,7 @@ Use run <number> to see the code examples.(theres some bug)`;
         const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
 
         for (let i = 0; i <= a.length; i++) {
-            for (let j = 0 <= b.length; j++) {
+            for (let j = 0; j <= b.length; j++) {
                 if (i === 0) {
                     dp[i][j] = j;
                 } else if (j === 0) {
@@ -237,7 +255,7 @@ Use run <number> to see the code examples.(theres some bug)`;
             case 'javascript':
                 return runJavaScriptSubCommand(option);
             default:
-                return 'Invalid command.';
+                return '<span class="error">Invalid command.</span>';
         }
     }
 
@@ -268,7 +286,7 @@ Use run <number> to see the code examples.(theres some bug)`;
 **
 *`;
             default:
-                return 'Invalid option for Java.';
+                return '<span class="error">Invalid option for Java.</span>';
         }
     }
 
@@ -300,7 +318,7 @@ Use run <number> to see the code examples.(theres some bug)`;
    ***
     *`;
             default:
-                return 'Invalid option for Python.';
+                return '<span class="error">Invalid option for Python.</span>';
         }
     }
 
@@ -334,7 +352,8 @@ Use run <number> to see the code examples.(theres some bug)`;
   ***
    *`;
             default:
-                return 'Invalid option for JavaScript.';
+                return '<span class="error">Invalid option for JavaScript.</span>';
         }
     }
 });
+</script>
