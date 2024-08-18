@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const terminalOutput = document.createElement('pre');
         terminalOutput.id = 'terminal-output';
         terminalOutput.style.margin = '0';
-        terminalOutput.style.fontSize = 'small';
+        terminalOutput.style.fontSize = '12';
         terminalOutput.innerHTML = `
 ██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗    ████████╗ ██████╗      ██████╗██████╗  █████╗ ██████╗ ██████╗ ██╗   ██╗███╗   ███╗███████╗██╗
 ██║    ██║██╔════╝██║     ██╔════╝██╔═══██╗████╗ ████║██╔════╝    ╚══██╔══╝██╔═══██╗    ██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔══██╗╚██╗ ██╔╝████╗ ████║██╔════╝██║
@@ -42,7 +42,8 @@ document.addEventListener('DOMContentLoaded', function () {
 ██║███╗██║██╔══╝  ██║     ██║     ██║   ██║██║╚██╔╝██║██╔══╝         ██║   ██║   ██║    ██║     ██╔══██╗██╔══██║██╔══██╗██╔══██╗  ╚██╔╝  ██║╚██╔╝██║██╔══╝  ╚═╝
 ╚███╔███╔╝███████╗███████╗╚██████╗╚██████╔╝██║ ╚═╝ ██║███████╗       ██║   ╚██████╔╝    ╚██████╗██║  ██║██║  ██║██████╔╝██████╔╝   ██║██╗██║ ╚═╝ ██║███████╗██╗
  ╚══╝╚══╝ ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝       ╚═╝    ╚═════╝      ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚═════╝    ╚═╝╚═╝╚═╝     ╚═╝╚══════╝╚═╝
-                                                                                                                                                               
+
+ 
 Instructions:
 1. To list available commands, type: <span class="command">help</span>
 2. To clear the terminal, type: <span class="command">clear</span>
