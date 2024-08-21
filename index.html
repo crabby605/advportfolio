@@ -95,34 +95,9 @@
     </style>
 </head>
 <body>
-    <div class="terminal">
-        <pre id="terminal-output">
-██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗    ████████╗ ██████╗      ██████╗██████╗  █████╗ ██████╗ ██████╗ ██╗   ██╗███╗   ███╗███████╗██╗
-██║    ██║██╔════╝██║     ██╔════╝██╔═══██╗████╗ ████║██╔════╝    ╚══██╔══╝██╔═══██╗    ██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔══██╗╚██╗ ██╔╝████╗ ████║██╔════╝██║
-██║ █╗ ██║█████╗  ██║     ██║     ██║   ██║██╔████╔██║█████╗         ██║   ██║   ██║    ██║     ██████╔╝███████║██████╔╝██████╔╝ ╚████╔╝ ██╔████╔██║█████╗  ██║
-██║███╗██║██╔══╝  ██║     ██║     ██║   ██║██║╚██╔╝██║██╔══╝         ██║   ██║   ██║    ██║     ██╔══██╗██╔══██║██╔══██╗██╔══██╗  ╚██╔╝  ██║╚██╔╝██║██╔══╝  ╚═╝
-╚███╔███╔╝███████╗███████╗╚██████╗╚██████╔╝██║ ╚═╝ ██║███████╗       ██║   ╚██████╔╝    ╚██████╗██║  ██║██║  ██║██████╔╝██████╔╝   ██║██╗██║ ╚═╝ ██║███████╗██╗
- ╚══╝╚══╝ ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝       ╚═╝    ╚═════╝      ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚═════╝    ╚═╝╚═╝╚═╝     ╚═╝╚══════╝╚═╝
 
-
-Instructions:
-1. To list available commands, type: <span class="command">help</span>
-2. To clear the terminal, type: <span class="command">clear</span>
-3. Use the following commands for more information:
-   - <span class="command">about</span> - Displays information about me
-   - <span class="command">contact</span> - Displays contact information
-   - <span class="command">learning</span> - Drafts for learning topics
-   - <span class="command">skills</span> - Lists and runs available skills
-        </pre>
-        <div class="input-area blinking-cursor">
-            <span id="user-ip">guest@crabby.me:</span>
-            <span class="tilde">~</span>
-            <span>$</span>
-            <input type="text" id="command-input" placeholder="Enter command" autofocus>
-        </div>
-    </div>
     <script>
-      <script>
+     
 document.addEventListener('DOMContentLoaded', function () {
     // Fetch the user's IP address
     fetch('https://api.ipify.org?format=json')
@@ -480,7 +455,7 @@ Use <span class="command">run <number></span> to see the code examples.`;
         }
     }
 });
-</script>
+
 
     </script>
 </body>
