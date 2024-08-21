@@ -122,153 +122,66 @@ Instructions:
         </div>
     </div>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Fetch the user's IP address
-            fetch('https://api.ipify.org?format=json')
-                .then(response => response.json())
-                .then(data => {
-                    const userIp = data.ip;
-                    initializeTerminal(userIp);
-                })
-                .catch(error => {
-                    console.error('Error fetching IP address:', error);
-                    initializeTerminal('unknown');
-                });
+       document.addEventListener('DOMContentLoaded', function () {
+    fetch('https://api.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => {
+            initializeTerminal(data.ip);
+        })
+        .catch(error => {
+            console.error('Error fetching IP address:', error);
+            initializeTerminal('unknown');
+        });
 
-            function initializeTerminal(userIp) {
-                // Update the terminal prompt with the user's IP
-                const inputPrompt = document.getElementById('user-ip');
-                inputPrompt.innerHTML = `<span class="command">${userIp}@crabby.me:</span>`;
+    function initializeTerminal(userIp) {
+        const inputPrompt = document.getElementById('user-ip');
+        inputPrompt.innerHTML = `<span class="command">${userIp}@crabby.me:</span>`;
+        
+        const commandInput = document.getElementById('command-input');
+
+        // Logging for debugging
+        console.log("Input initialized: ", commandInput);
+
+        commandInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const command = this.value.trim();
                 
-                document.getElementById('command-input').addEventListener('keypress', function(event) {
-                    if (event.key === 'Enter') {
-                        event.preventDefault();
-                        processCommand(this.value, userIp);
-                        this.value = '';
-                    }
-                });
-            }
+                // Logging the captured command
+                console.log("Captured command: ", command);
 
-            const commands = ['help', 'clear', 'about', 'contact', 'learning', 'skills', 'run'];
-
-            function processCommand(command, userIp) {
-                const output = document.getElementById('terminal-output');
-                const [cmd, option] = command.split(' ');
-
-                let result = '';
-
-                if (!commands.includes(cmd)) {
-                    const suggestion = findClosestCommand(cmd);
-                    if (suggestion) {
-                        result = `<span class="error">Command not found: ${cmd}. Did you mean <span class="command">${suggestion}</span>?</span>`;
-                    } else {
-                        result = '<span class="error">Invalid command. Type <span class="command">help</span> for available commands.</span>';
-                    }
+                if (command) {
+                    processCommand(command, userIp);
+                    this.value = '';  // Clear the input field after processing
                 } else {
-                    switch (cmd) {
-                        case 'help':
-                            result = '<span class="command">Available commands:</span>\n' +
-                                     '<span class="command">help</span> - Display this help message\n' +
-                                     '<span class="command">clear</span> - Clear the terminal\n' +
-                                     '<span class="command">about</span> - Displays information about me\n' +
-                                     '<span class="command">contact</span> - Displays contact information\n' +
-                                     '<span class="command">learning</span> - Drafts for learning topics\n' +
-                                     '<span class="command">skills</span> - Lists and runs available skills';
-                            break;
-                        case 'clear':
-                            output.innerHTML = '';
-                            return;
-                        case 'about':
-                            result = 'Vihaan (known as Crabby or Crabby605 on the internet)\n' +
-                                     'I play Minecraft and love photography.';
-                            break;
-                        case 'contact':
-                            result = 'Email: <a href="mailto:vihaanpingalkar4@proton.me">vihaanpingalkar4@proton.me</a>\n' +
-                                     'GitHub: <a href="https://github.com/Crabby605" target="_blank">Crabby605</a>\n' +
-                                     'Reddit: <a href="https://reddit.com/u/Crabby605" target="_blank">Crabby605</a>\n' +
-                                     'Discord: Crabby605';
-                            break;
-                        case 'learning':
-                            result = '<h1>My Learning Journey</h1>\n' +
-                                     '<p>Here are some of the platforms and achievements from my learning journey:</p>\n' +
-                                     '<div class="certificates">\n' +
-                                     '  <h2>EDX</h2>\n' +
-                                     '  <p>I\'m on EDX learning Python using the CS50 course by Harvard and a Python course by MIT. I hope to finish and pass!</p>\n' +
-                                     '\n' +
-                                     '  <h2>GitHub</h2>\n' +
-                                     '  <p>I\'m on GitHub, check out my repositories <a href="https://github.com/Crabby605" target="_blank">here</a>.</p>\n' +
-                                     '\n' +
-                                     '  <h2>Hack Club</h2>\n' +
-                                     '  <p>Yes, I do have a Hack Club! If you want to see my development, check out my scrapbook <a href="https://hack.club/r68gu" target="_blank">here</a>.</p>\n' +
-                                     '\n' +
-                                     '  <h2>LeetCode</h2>\n' +
-                                     '  <p>Like any sensible person, I have a LeetCode account.</p>\n' +
-                                     '\n' +
-                                     '  <h2>Google Cloud</h2>\n' +
-                                     '  <p>I have also learned to use Google Cloud. You can see my achievements down there.</p>\n' +
-                                     '</div>';
-                            break;
-                        case 'skills':
-                            result = 'Available skills:\n' +
-                                     '1. Python: Hello, World!\n' +
-                                     '2. Java: Hello, World!\n' +
-                                     '3. JavaScript: Hello, World!\n' +
-                                     'Use <span class="command">run &lt;number&gt;</span> to see the code examples.';
-                            break;
-                        case 'run':
-                            if (option) {
-                                result = runSubCommand(option);
-                            } else {
-                                result = '<span class="error">Specify an option to run, e.g., run 1</span>';
-                            }
-                            break;
-                    }
-                }
-
-                output.innerHTML += '<br>' + inputPrompt.innerHTML + ' <span class="command">' + command + '</span><br>' + result;
-                const terminal = document.querySelector('.terminal');
-                terminal.scrollTop = terminal.scrollHeight;
-            }
-
-            function findClosestCommand(input) {
-                const distances = commands.map(cmd => ({
-                    cmd,
-                    distance: levenshteinDistance(input, cmd)
-                }));
-                distances.sort((a, b) => a.distance - b.distance);
-                return distances[0].distance <= 2 ? distances[0].cmd : null;
-            }
-
-            function levenshteinDistance(a, b) {
-                const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
-                for (let i = 0; i <= a.length; i++) dp[i][0] = i;
-                for (let j = 0; j <= b.length; j++) dp[0][j] = j;
-                for (let i = 1; i <= a.length; i++) {
-                    for (let j = 1; j <= b.length; j++) {
-                        const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-                        dp[i][j] = Math.min(
-                            dp[i - 1][j] + 1,
-                            dp[i][j - 1] + 1,
-                            dp[i - 1][j - 1] + cost
-                        );
-                    }
-                }
-                return dp[a.length][b.length];
-            }
-
-            function runSubCommand(option) {
-                switch (option) {
-                    case '1':
-                        return 'Python example: print("Hello, World!")';
-                    case '2':
-                        return 'Java example: System.out.println("Hello, World!");';
-                    case '3':
-                        return 'JavaScript example: console.log("Hello, World!");';
-                    default:
-                        return '<span class="error">Invalid option. Use 1, 2, or 3.</span>';
+                    console.log("Empty input detected"); // Handle empty input case
                 }
             }
         });
+    }
+
+    function processCommand(command, userIp) {
+        const output = document.getElementById('terminal-output');
+        const [cmd, option] = command.split(' ');
+
+        let result = '';
+
+        if (!commands.includes(cmd)) {
+            const suggestion = findClosestCommand(cmd);
+            if (suggestion) {
+                result = `<span class="error">Command not found: ${cmd}. Did you mean <span class="command">${suggestion}</span>?</span>`;
+            } else {
+                result = '<span class="error">Invalid command. Type <span class="command">help</span> for available commands.</span>';
+            }
+        } else {
+            // Existing switch case for command processing...
+        }
+
+        output.innerHTML += `<br>${userIp}@crabby.me ~ $ ${command}<br>${result}`;
+        document.querySelector('.terminal').scrollTop = document.querySelector('.terminal').scrollHeight;
+    }
+});
+
     </script>
 </body>
 </html>
